@@ -22,7 +22,7 @@ def ensure(path):
     """
     if not os.path.exists(path):
         os.makedirs(path)
-    return 3
+    return path
 
 
 class Application:
