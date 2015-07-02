@@ -4,10 +4,13 @@
 import glob
 import json
 import os
+from gi.repository import Gtk, Gio
 
 import appdirs
 
 from application.docsets import Docset
+from application.gtk.components import TarponWindow
+
 import application.info
 
 
@@ -29,15 +32,24 @@ def ensure(path):
     return path
 
 
-class Application:
+class Application(Gtk.Application):
     data_dir = ensure(appdirs.user_data_dir(appname=info.SHORT_NAME))
     cache_dir = ensure(appdirs.user_cache_dir(appname=info.SHORT_NAME))
     # log_dir = ensure(appdirs.user_log_dir(appname=info.SHORT_NAME))
     docsets = {}
+    windows = []
+
     def __init__(self):
+        super(Gtk.Application, self).__init__(application_id="com.sarkhelk.tarpon", flags=Gio.ApplicationFlags.FLAGS_NONE)
         search_paths = glob.glob(self.data_dir + "/*.docset")
         search_paths.extend(glob.glob(self.cache_dir + "/*.json"))
         self.load_docsets(search_paths)
+
+    def new_window(self):
+        window = TarponWindow()
+        self.windows.append(window)
+        # TODO: Figure out why Gtk.Application.add_window() causes a SIGSEGV.
+        # self.add_window(window)
 
     def load_docsets(self, paths):
         for path in paths:
