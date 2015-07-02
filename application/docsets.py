@@ -84,6 +84,9 @@ class Docset:
         else:
             raise InvalidDocsetException("Docset is not on disk")
 
+    def __str__(self):
+        return "<Docset '{0}'>".format(self.name)
+
     @classmethod
     def frompath(cls, path):
         plist_path = os.path.join(path, "Contents", "Info.plist")
