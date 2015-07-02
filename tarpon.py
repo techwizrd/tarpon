@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from application import Application
+
 
 def main():
     """Starts the Tarpon application"""
-    pass
+    app = Application()
 
 
 if __name__ == '__main__':
