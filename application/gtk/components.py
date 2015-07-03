@@ -147,12 +147,13 @@ class TarponWindow(Gtk.Window):
         self.__web_notebook = WebNotebook()
         self.__web_notebook.new_tab(None)
 
+        self.__wrapper = Gtk.Box(Gtk.Orientation.VERTICAL)
         self.__content = Gtk.Paned()
         self.__content.add1(self.__sidebar)
         self.__content.add2(self.__web_notebook)
         self.__content.set_position(200)
-        self.add(self.__content)
-
+        self.__wrapper.add(self.__content)
+        self.add(self.__wrapper)
 
         self.connect('delete-event', Gtk.main_quit)
         self.connect_signals()
