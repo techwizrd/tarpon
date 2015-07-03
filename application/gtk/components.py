@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
 from gi.repository import Gdk, Gio, Gtk, WebKit
 
 
@@ -127,19 +129,30 @@ class WebNotebook(Gtk.Notebook):
 
 
 class TarponWindow(Gtk.Window):
-    def __init__(self):
+    def __init__(self, application):
         super(Gtk.Window, self).__init__(title="Tarpon")
         self.set_default_size(800, 600)
         self.set_gravity(Gdk.Gravity.CENTER)
         self.set_position(Gtk.WindowPosition.CENTER)
+        # TODO: Figur out why Gtk.Window.set_application SIGSEVs.
+        # This should not be necessary to store, but using
+        # Gtk.Window.set_application or Gtk.Application.set_window causes a
+        # SIGSEV error to occur.
+        self.__application = application
 
         self.build_bars()
         self.set_titlebar(self.__header)
+
+        self.build_sidebar()
         self.__web_notebook = WebNotebook()
         self.__web_notebook.new_tab(None)
+
         self.__content = Gtk.Paned()
-        self.__content.add(self.__web_notebook)
+        self.__content.add1(self.__sidebar)
+        self.__content.add2(self.__web_notebook)
+        self.__content.set_position(200)
         self.add(self.__content)
+
 
         self.connect('delete-event', Gtk.main_quit)
         self.connect_signals()
@@ -165,13 +178,66 @@ class TarponWindow(Gtk.Window):
         self.__header.add_buttons_to_right((self.__new_tab, self.__menu))
 
     def build_sidebar(self):
-        # self.__sidebar = Gtk.ScrolledWindow()
+        # TODO: Refactor build_sidebar() into its own "Sidebar" component
+        self.__sidebar = Gtk.ScrolledWindow()
+        self.__sidebar_store = Gtk.TreeStore(str)
+        self.__sidebar_filter = self.__sidebar_store.filter_new()
+        self.__sidebar_filter.set_visible_func(self.filter_func)
+        for name, docset in self.__application.docsets_on_disk:
+            treeiter = self.__sidebar_store.append(None, [name])
+            type_rows = {}
+            for item in docset.items:
+                if item.data_type not in type_rows:
+                    type_rows[item.data_type] = self.__sidebar_store.append(treeiter, [item.data_type])
+                self.__sidebar_store.append(type_rows[item.data_type], [item.name])
+        self.__treeview = Gtk.TreeView.new_with_model(self.__sidebar_filter)
+        renderer = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(None, renderer, text=0)
+        self.__treeview.append_column(column)
+        self.__treeview.set_headers_visible(False)
+        self.__treeview.set_activate_on_single_click(True)
+
+        self.__sidebar.add(self.__treeview)
+        self.__sidebar.set_vexpand(True)
+
+
         # self.__sidebar.add(Gtk.Label("hi"))
-        # self.__content.add(self.__sidebar)
-        self.__content.add(Gtk.Label("hi"))
-        self.__content.set_position(200)
 
     def connect_signals(self):
         self.__back.connect("clicked", self.__web_notebook.go_back)
         self.__forward.connect("clicked", self.__web_notebook.go_forward)
         self.__new_tab.connect("clicked", self.__web_notebook.new_tab)
+        self.__treeview.connect("row-activated", self.docitem_selected)
+
+    def docitem_selected(self, widget, path, column):
+        """Change the browser page when an item is selected from the sidebar."""
+        # The tree has 3 levels: docset, data type (function, class, etc.), and
+        # document item. If we select a docset (top-level or path length 1), we
+        # would like to browse to the index for that docset. If we select a data
+        # type such as function or class (path length 2), we should do nothing.
+        # If we select a document item (path length 3), we should browse to the
+        # path on disk associated with that item.
+        # TODO: Refactor docitem_selected to be more understandable.
+        if len(path) == 2:
+            return None
+        treeiter = self.__sidebar_filter.get_iter(path)
+        value = self.__sidebar_filter.get_value(treeiter, 0)
+        if len(path) == 1:
+            docset = self.__application.docsets[value]
+            self.__web_notebook.browser.load_uri("file://" + docset.index_path)
+        elif len(path) == 3:
+            type_iter = self.__sidebar_filter.iter_parent(treeiter)
+            data_type = self.__sidebar_filter.get_value(type_iter, 0)
+            parent_iter = self.__sidebar_filter.iter_parent(type_iter)
+            parent = self.__sidebar_filter.get_value(parent_iter, 0)
+            docset = self.__application.docsets[parent]
+            print(parent, data_type, value)
+            for item in docset.items:
+                if item.name == value and item.data_type == data_type:
+                    page = os.path.join(docset.doc_path, item.path)
+                    self.__web_notebook.browser.load_uri("file://" + page)
+                    return None
+
+
+    def filter_func(self, model, treeiter, data):
+        return True

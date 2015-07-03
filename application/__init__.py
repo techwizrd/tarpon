@@ -41,9 +41,6 @@ class Application(Gtk.Application):
 
     def __init__(self):
         super(Gtk.Application, self).__init__(application_id="com.sarkhelk.tarpon", flags=Gio.ApplicationFlags.FLAGS_NONE)
-        self.connect("startup", self.startup)
-
-    def startup(self):
         search_paths = glob.glob(self.data_dir + "/*.docset")
         search_paths.extend(glob.glob(self.cache_dir + "/*.json"))
         self.load_docsets(search_paths)
@@ -53,7 +50,7 @@ class Application(Gtk.Application):
         pass
 
     def new_window(self):
-        window = TarponWindow()
+        window = TarponWindow(self)
         self.windows.append(window)
         # TODO: Figure out why Gtk.Application.add_window() causes a SIGSEGV.
         # self.add_window(window)

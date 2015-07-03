@@ -47,6 +47,7 @@ class Docset:
         self.icon_url = None
         self.icon_path = None
         self._items = None
+        self._doc_path = None
 
     @property
     def on_disk(self):
@@ -56,6 +57,13 @@ class Docset:
     def db_path(self):
         if self.on_disk:
             return os.path.join(self.path, "Contents/Resources/docSet.dsidx")
+
+    @property
+    def doc_path(self):
+        if self.on_disk:
+            self._doc_path = os.path.join(self.path,
+                                          "Contents/Resources/Documents/")
+        return self._doc_path
 
     @property
     def items(self):
