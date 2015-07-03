@@ -48,6 +48,8 @@ class Docset:
         self.icon_path = None
         self._items = None
         self._doc_path = None
+        if path and self.on_disk:
+            self.read_docset()
 
     @property
     def on_disk(self):
@@ -82,7 +84,7 @@ class Docset:
                 if pl["isDashDocset"]:
                     self.name = pl["CFBundleName"]
                     self.identifier = pl["CFBundleIdentifier"]
-                    self.index_path = os.path.join(self.path,
+                    self.index_path = os.path.join(self.doc_path,
                                                    pl["dashIndexFilePath"])
                 else:
                     InvalidDocsetException(
