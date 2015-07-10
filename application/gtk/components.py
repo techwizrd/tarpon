@@ -130,7 +130,7 @@ class WebNotebook(Gtk.Notebook):
 
 class TarponWindow(Gtk.Window):
     def __init__(self, application):
-        super(Gtk.Window, self).__init__(title="Tarpon")
+        Gtk.Window.__init__(self, title="Tarpon", application=application)
         self.set_default_size(800, 600)
         self.set_gravity(Gdk.Gravity.CENTER)
         self.set_position(Gtk.WindowPosition.CENTER)
@@ -155,7 +155,6 @@ class TarponWindow(Gtk.Window):
         self.__wrapper.add(self.__content)
         self.add(self.__wrapper)
 
-        self.connect('delete-event', Gtk.main_quit)
         self.connect_signals()
         self.show_all()
 
@@ -169,7 +168,7 @@ class TarponWindow(Gtk.Window):
         self.__forward.add(Gtk.Arrow(Gtk.ArrowType.RIGHT, Gtk.ShadowType.NONE))
         self.__new_tab = toolbar_button("tab-new-symbolic", Gtk.Button)
         self.__search = toolbar_button("edit-find-symbolic", Gtk.ToggleButton)
-        self.__menu = toolbar_button("open-menu-symbolic", Gtk.ToggleButton)
+        self.__menu = toolbar_button("open-menu-symbolic", Gtk.MenuButton)
 
         # Add buttons to header
         # TODO: Add buttons to a toolbar instead of Titlebar if using Unity.
@@ -178,7 +177,6 @@ class TarponWindow(Gtk.Window):
         self.__header.add_buttons_to_left((self.__back, self.__forward),
                                           linked=True, spacing=0)
         self.__header.add_buttons_to_right((self.__new_tab, self.__menu))
-
     def build_sidebar(self):
         # TODO: Refactor build_sidebar() into its own "Sidebar" component
         self.__sidebar = Gtk.ScrolledWindow()
@@ -202,14 +200,13 @@ class TarponWindow(Gtk.Window):
         self.__sidebar.add(self.__treeview)
         self.__sidebar.set_vexpand(True)
 
-
-        # self.__sidebar.add(Gtk.Label("hi"))
-
     def connect_signals(self):
+        self.connect("destroy", self.on_quit)
         self.__back.connect("clicked", self.__web_notebook.go_back)
         self.__forward.connect("clicked", self.__web_notebook.go_forward)
         self.__new_tab.connect("clicked", self.__web_notebook.new_tab)
         self.__treeview.connect("row-activated", self.docitem_selected)
+        # self.__menu.connect("clicked", self.toggle_menu)
 
     def docitem_selected(self, widget, path, column):
         """Change the browser page when an item is selected from the sidebar."""
@@ -240,6 +237,8 @@ class TarponWindow(Gtk.Window):
                     self.__web_notebook.browser.load_uri("file://" + page)
                     return None
 
-
     def filter_func(self, model, treeiter, data):
         return True
+
+    def on_quit(self, widget, data=None):
+        self.destroy()

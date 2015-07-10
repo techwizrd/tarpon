@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from gi.repository import Gtk
+import sys
 
 from application import Application
 
@@ -9,8 +9,8 @@ from application import Application
 def main():
     """Starts the Tarpon application"""
     app = Application()
-    app.new_window()
-    Gtk.main()
+    exit_status = app.run(sys.argv)
+    sys.exit(exit_status)
 
 
 if __name__ == '__main__':
