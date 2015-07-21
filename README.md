@@ -3,6 +3,8 @@ Tarpon
 
 Tarpon is an offline documentation browser written using Python and Gtk+3.
 
+![Screenshot of Tarpon](https://raw.githubusercontent.com/techwizrd/tarpon/master/Screenshot.png)
+
 Installing and Running
 ----------------------
 
