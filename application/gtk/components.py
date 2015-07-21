@@ -6,6 +6,18 @@ import os
 from gi.repository import Gdk, Gio, Gtk, WebKit
 
 
+def views(path):
+    """
+    Gets absolute path of view relative to this file.
+
+    :type path: str
+    :param path: relative path
+    :rtype: str
+    :returns: absolute representation of relative path
+    """
+    return os.path.join(os.path.dirname(__file__), path)
+
+
 def toolbar_button(themed_icon, button_class):
     """
     Create new Gtk.Button or Gtk.ToogleButton from a stock Gtk icon name
@@ -65,10 +77,10 @@ class Titlebar(Gtk.HeaderBar):
 
     def add_buttons_to_right(self, buttons, linked=False, spacing=6):
         """
-        Add button(s) to right of title. If there is only one button, the button
-        will be added on its own. If more than one button is provided, the
-        buttons will be added to a Gtk.Box container before being add right of
-        the title.
+        Add button(s) to right of title. If there is only one button, the
+        button will be added on its own. If more than one button is provided,
+        the buttons will be added to a Gtk.Box container before being add right
+        of the title.
 
         :param buttons: a list of Gtk.Button elements to be added
         :param linked: True if the buttons should be linked together
@@ -108,7 +120,6 @@ class WebNotebook(Gtk.Notebook):
         self.append_page(sw, tab_label)
         self.show_all()
 
-
     @property
     def browser(self):
         """
@@ -128,17 +139,13 @@ class WebNotebook(Gtk.Notebook):
         self.browser.go_forward()
 
 
-class TarponWindow(Gtk.Window):
+class TarponWindow(Gtk.ApplicationWindow):
     def __init__(self, application):
+        self.__application = application
         Gtk.Window.__init__(self, title="Tarpon", application=application)
         self.set_default_size(800, 600)
         self.set_gravity(Gdk.Gravity.CENTER)
         self.set_position(Gtk.WindowPosition.CENTER)
-        # TODO: Figur out why Gtk.Window.set_application SIGSEVs.
-        # This should not be necessary to store, but using
-        # Gtk.Window.set_application or Gtk.Application.set_window causes a
-        # SIGSEV error to occur.
-        self.__application = application
 
         self.build_bars()
         self.set_titlebar(self.__header)
@@ -170,6 +177,12 @@ class TarponWindow(Gtk.Window):
         self.__search = toolbar_button("edit-find-symbolic", Gtk.ToggleButton)
         self.__menu = toolbar_button("open-menu-symbolic", Gtk.MenuButton)
 
+        builder = Gtk.Builder()
+        builder.add_from_file(views("menu.ui"))
+        popover = Gtk.Popover.new_from_model(self.__menu,
+                                             builder.get_object("menu"))
+        self.__menu.set_popover(popover)
+
         # Add buttons to header
         # TODO: Add buttons to a toolbar instead of Titlebar if using Unity.
         # Unity attaches the menu to the top of the screen, so Gtk.HeaderBar
@@ -177,6 +190,7 @@ class TarponWindow(Gtk.Window):
         self.__header.add_buttons_to_left((self.__back, self.__forward),
                                           linked=True, spacing=0)
         self.__header.add_buttons_to_right((self.__new_tab, self.__menu))
+
     def build_sidebar(self):
         # TODO: Refactor build_sidebar() into its own "Sidebar" component
         self.__sidebar = Gtk.ScrolledWindow()
@@ -189,7 +203,8 @@ class TarponWindow(Gtk.Window):
             for item in docset.items:
                 if item.data_type not in type_rows:
                     type_rows[item.data_type] = self.__sidebar_store.append(treeiter, [item.data_type])
-                self.__sidebar_store.append(type_rows[item.data_type], [item.name])
+                self.__sidebar_store.append(type_rows[item.data_type],
+                                            [item.name])
         self.__treeview = Gtk.TreeView.new_with_model(self.__sidebar_filter)
         renderer = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn(None, renderer, text=0)
@@ -206,7 +221,18 @@ class TarponWindow(Gtk.Window):
         self.__forward.connect("clicked", self.__web_notebook.go_forward)
         self.__new_tab.connect("clicked", self.__web_notebook.new_tab)
         self.__treeview.connect("row-activated", self.docitem_selected)
-        # self.__menu.connect("clicked", self.toggle_menu)
+
+        new_tab_action = Gio.SimpleAction.new("new_tab")
+        new_tab_action.connect("activate", self.on_new_tab)
+        self.add_action(new_tab_action)
+
+        new_window_action = Gio.SimpleAction.new("new_window")
+        new_window_action.connect("activate", self.on_new_window)
+        self.add_action(new_window_action)
+
+        quit_action = Gio.SimpleAction.new("quit")
+        quit_action.connect("activate", self.on_quit)
+        self.add_action(quit_action)
 
     def docitem_selected(self, widget, path, column):
         """Change the browser page when an item is selected from the sidebar."""
@@ -239,6 +265,12 @@ class TarponWindow(Gtk.Window):
 
     def filter_func(self, model, treeiter, data):
         return True
+
+    def on_new_window(self, action, parameter):
+        self.__application.on_new_window(action, parameter)
+
+    def on_new_tab(self, action, parameter):
+        self.__web_notebook.new_tab(None)
 
     def on_quit(self, widget, data=None):
         self.destroy()

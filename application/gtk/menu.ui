@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <menu id="menu">
+  <section>
+    <item>
+      <attribute name="label">_New Window</attribute>
+      <attribute name="accel">&lt;Primary&gt;n</attribute>
+      <attribute name="action">win.new_window</attribute>
+    </item>
+    <item>
+      <attribute name="label">New _Tab</attribute>
+      <attribute name="accel">&lt;Primary&gt;n</attribute>
+      <attribute name="action">win.new_tab</attribute>
+    </item>
+  </section>
+  <section>
+    <item>
+      <attribute name="label" translatable="yes">Preferences</attribute>
+      <attribute name="action">win.preferences</attribute>
+    </item>
+  </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">About</attribute>
+        <attribute name="action">win.about</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Quit</attribute>
+        <attribute name="accel">&lt;Primary&gt;q</attribute>
+        <attribute name="action">win.quit</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>
