@@ -169,7 +169,8 @@ class TarponWindow(Gtk.ApplicationWindow):
 
     def build_bars(self):
         self.__header = Titlebar(title="Tarpon", show_close_button=True)
-        self.__header.set_decoration_layout(":close")
+        if hasattr(Gtk.HeaderBar, 'set_decoration_layout'):
+            self.__header.set_decoration_layout(":close")
 
         self.__back = Gtk.Button()
         self.__back.add(Gtk.Arrow(Gtk.ArrowType.LEFT, Gtk.ShadowType.NONE))
