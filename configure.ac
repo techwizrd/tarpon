@@ -8,6 +8,8 @@ AC_CONFIG_FILES([
     data/Makefile
     data/tarpon.desktop
     data/ui/Makefile
+    data/ui/about_dialog.ui
+    data/ui/about_dialog_hb.ui
     src/Makefile
     src/tarpon_app/Makefile
     src/tarpon_app/gtk/Makefile

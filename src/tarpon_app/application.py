@@ -9,7 +9,7 @@ from gi.repository import Gtk, Gio
 import appdirs
 
 from tarpon_app.docsets import Docset
-from tarpon_app.gtk.components import TarponWindow
+from tarpon_app.gtk.components import TarponWindow, views
 import tarpon_app.info as info
 
 
@@ -139,8 +139,18 @@ class Application(Gtk.Application):
     def on_quit(self, action, parameter):
         self.quit()
 
-    def on_about(self, action, parameter):
-        pass
+    def on_about(self, action, parameter, transient_for=None):
+        builder = Gtk.Builder()
+        if self.prefers_app_menu():
+            builder.add_from_file(views(self.pkgdatadir, "about_dialog_hb.ui"))
+        else:
+            builder.add_from_file(views(self.pkgdatadir, "about_dialog.ui"))
+
+        about_dialog = builder.get_object("about_dialog")
+        if transient_for:
+            about_dialog.set_transient_for(transient_for)
+        about_dialog.run()
+        about_dialog.destroy()
 
     def on_preferences(self, action, parameter):
         pass

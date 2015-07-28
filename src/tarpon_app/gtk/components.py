@@ -233,6 +233,10 @@ class TarponWindow(Gtk.ApplicationWindow):
         new_window_action.connect("activate", self.on_new_window)
         self.add_action(new_window_action)
 
+        about_action = Gio.SimpleAction.new("about")
+        about_action.connect("activate", self.on_about)
+        self.add_action(about_action)
+
         quit_action = Gio.SimpleAction.new("quit")
         quit_action.connect("activate", self.on_quit)
         self.add_action(quit_action)
@@ -274,6 +278,9 @@ class TarponWindow(Gtk.ApplicationWindow):
 
     def on_new_tab(self, action, parameter):
         self.__web_notebook.new_tab(None)
+
+    def on_about(self, action, parameter):
+        self.__application.on_about(action, parameter, transient_for=self)
 
     def on_quit(self, widget, data=None):
         self.destroy()
