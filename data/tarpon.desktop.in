@@ -2,7 +2,7 @@
 Version=@VERSION@
 Encoding=UTF-8
 Name=@PACKAGE_NAME@
-GenericName=@PACKAGE_NAME
+GenericName=@PACKAGE_NAME@
 Comment=Offline documentation browser
 Icon=@PACKAGE@
 Exec=@PACKAGE@
