@@ -1,0 +1,20 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import sys
+
+sys.path.insert(1, '@pythondir@')
+
+from tarpon_app.application import Application
+
+
+def main():
+    """Starts the Tarpon application"""
+    app = Application(package="@PACKAGE@", version="@VERSION@",
+                      pkgdatadir="@pkgdatadir@")
+    exit_status = app.run(sys.argv)
+    sys.exit(exit_status)
+
+
+if __name__ == '__main__':
+    main()

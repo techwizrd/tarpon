@@ -1,10 +1,11 @@
 [Desktop Entry]
-Version=0.1-development
-Name=Tarpon
-GenericName=Tarpon
+Version=@VERSION@
+Encoding=UTF-8
+Name=@PACKAGE_NAME@
+GenericName=@PACKAGE_NAME
 Comment=Offline documentation browser
-Icon=Tarpon
-Exec=/usr/bin/tarpon.py
+Icon=@PACKAGE@
+Exec=@PACKAGE@
 Terminal=false
 Type=Application
 Categories=GNOME;GTK;Development;

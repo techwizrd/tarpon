@@ -8,9 +8,9 @@ from gi.repository import Gtk, Gio
 
 import appdirs
 
-from application.docsets import Docset
-from application.gtk.components import TarponWindow
-import application.info
+from tarpon_app.docsets import Docset
+from tarpon_app.gtk.components import TarponWindow
+import tarpon_app.info as info
 
 
 APP_MENU = """<?xml version="1.0" encoding="UTF-8"?>
@@ -45,7 +45,6 @@ APP_MENU = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 
-
 def ensure(path):
     """
     Ensures that a path exists by creating it if necessary.
@@ -70,9 +69,12 @@ class Application(Gtk.Application):
     # log_dir = ensure(appdirs.user_log_dir(appname=info.SHORT_NAME))
     docsets = {}
 
-    def __init__(self):
+    def __init__(self, package, version, pkgdatadir):
         Gtk.Application.__init__(self, application_id="com.sarkhelk.tarpon",
                                  flags=Gio.ApplicationFlags.FLAGS_NONE)
+        self.package = package
+        self.version = version
+        self.pkgdatadir = pkgdatadir
         search_paths = glob.glob(self.data_dir + "/*.docset")
         search_paths.extend(glob.glob(self.cache_dir + "/*.json"))
         self.load_docsets(search_paths)

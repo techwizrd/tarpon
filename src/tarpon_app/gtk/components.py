@@ -6,16 +6,18 @@ import os
 from gi.repository import Gdk, Gio, Gtk, WebKit
 
 
-def views(path):
+def views(pkgdatadir, path):
     """
-    Gets absolute path of view relative to this file.
+    Gets absolute path of view from pkgdatadir.
 
+    :type pkgdatadir: str
+    :param pkgdatadir: package data directory
     :type path: str
     :param path: relative path
     :rtype: str
     :returns: absolute representation of relative path
     """
-    return os.path.join(os.path.dirname(__file__), path)
+    return os.path.abspath(os.path.join(pkgdatadir, "ui", path))
 
 
 def toolbar_button(themed_icon, button_class):
@@ -178,7 +180,7 @@ class TarponWindow(Gtk.ApplicationWindow):
         self.__menu = toolbar_button("open-menu-symbolic", Gtk.MenuButton)
 
         builder = Gtk.Builder()
-        builder.add_from_file(views("menu.ui"))
+        builder.add_from_file(views(self.__application.pkgdatadir, "menu.ui"))
         popover = Gtk.Popover.new_from_model(self.__menu,
                                              builder.get_object("menu"))
         self.__menu.set_popover(popover)

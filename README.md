@@ -13,6 +13,17 @@ To run Tarpon, execute it directly for now:
     $ cd tarpon
     $ python tarpon.py
 
+In order to install Tarpon, execute the following autotools commands:
+
+    $ aclocal
+    $ autoconf
+    $ automake --add-missing
+    $ ./configure
+    $ make
+    $ make install
+
+Uninstall Tarpon using ``make uninstall`` or install Tarpon locally (rather than system-wide) by executing ``./configure --prefix=~/.local``. A distributable package can be built using ``make dist``.
+
 FAQ
 ---
 
