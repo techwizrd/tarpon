@@ -15,14 +15,11 @@ To run Tarpon, execute it directly for now:
 
 In order to install Tarpon, execute the following autotools commands:
 
-    $ aclocal
-    $ autoconf
-    $ automake --add-missing
-    $ ./configure
+    $ ./autogen.sh
     $ make
     $ make install
 
-Uninstall Tarpon using ``make uninstall`` or install Tarpon locally (rather than system-wide) by executing ``./configure --prefix=~/.local``. A distributable package can be built using ``make dist``.
+Uninstall Tarpon using ``make uninstall`` or install Tarpon locally (rather than system-wide) by executing ``./configure --prefix=~/.local`` before executing ``make``. A distributable package can be built using ``make dist``.
 
 FAQ
 ---
