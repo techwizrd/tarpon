@@ -150,7 +150,10 @@ class TarponWindow(Gtk.ApplicationWindow):
         self.set_position(Gtk.WindowPosition.CENTER)
 
         self.build_bars()
-        self.set_titlebar(self.__header)
+        if self.__application.prefers_app_menu():
+            self.set_titlebar(self.__header)
+        else:
+            print("We should show a toolbar since app menus are not preferred")
 
         self.build_sidebar()
         self.__web_notebook = WebNotebook()
