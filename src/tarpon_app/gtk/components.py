@@ -248,6 +248,10 @@ class TarponWindow(Gtk.ApplicationWindow):
         quit_action.connect("activate", self.on_quit)
         self.add_action(quit_action)
 
+        toggle_panel_action = Gio.SimpleAction.new("toggle_panel")
+        toggle_panel_action.connect("activate", self.toggle_panel)
+        self.add_action(toggle_panel_action)
+
     def docitem_selected(self, widget, path, column):
         """Change the browser page when an item is selected from the sidebar."""
         # The tree has 3 levels: docset, data type (function, class, etc.), and
@@ -291,3 +295,9 @@ class TarponWindow(Gtk.ApplicationWindow):
 
     def on_quit(self, widget, data=None):
         self.destroy()
+
+    def toggle_panel(self, widget, data=None):
+        if self.__sidebar.is_visible():
+            self.__sidebar.hide()
+        else:
+            self.__sidebar.show()
