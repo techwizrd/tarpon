@@ -185,9 +185,13 @@ class TarponWindow(Gtk.ApplicationWindow):
 
         builder = Gtk.Builder()
         builder.add_from_file(views(self.__application.pkgdatadir, "menu.ui"))
-        popover = Gtk.Popover.new_from_model(self.__menu,
-                                             builder.get_object("menu"))
-        self.__menu.set_popover(popover)
+        if hasattr(Gtk, 'Popover'):
+            popover = Gtk.Popover.new_from_model(self.__menu,
+                                                builder.get_object("menu"))
+            self.__menu.set_popover(popover)
+        else:
+            print("Gtk.Popover not supported. Using menu model.")
+            self.__menu.set_menu_model(builder.get_object("menu"))
 
         # Add buttons to header
         # TODO: Add buttons to a toolbar instead of Titlebar if using Unity.
