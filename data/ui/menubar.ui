@@ -31,7 +31,7 @@
             <attribute name="label" translatable="yes">_Edit</attribute>
             <item>
               <attribute name="label" translatable="yes">Preferences</attribute>
-              <attribute name="action">win.preferences</attribute>
+              <attribute name="action">app.preferences</attribute>
             </item>
         </submenu>
         <submenu>
