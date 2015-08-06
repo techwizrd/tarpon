@@ -1,5 +1,5 @@
 uidir = $(pkgdatadir)/ui
-ui_DATA = menu.ui about_dialog.ui about_dialog_hb.ui
+ui_DATA = menu.ui menubar.ui about_dialog.ui about_dialog_hb.ui
 
 do_substitution = sed -e 's,[@]pythondir[@],$(pythondir),g' \
 	-e 's,[@]pkgdatadir[@],$(pkgdatadir),g' \

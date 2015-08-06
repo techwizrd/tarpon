@@ -95,26 +95,27 @@ class Application(Gtk.Application):
             builder = Gtk.Builder()
             builder.add_from_string(APP_MENU)
             self.set_app_menu(builder.get_object("menu"))
-
-            new_window_action = Gio.SimpleAction.new("new_window", None)
-            new_window_action.connect("activate", self.on_new_window)
-            self.add_action(new_window_action)
-
-            quit_action = Gio.SimpleAction.new("quit", None)
-            quit_action.connect("activate", self.on_quit)
-            self.add_action(quit_action)
-
-            preferences_action = Gio.SimpleAction.new("preferences", None)
-            preferences_action.connect("activate", self.on_preferences)
-            self.add_action(preferences_action)
-
-            about_action = Gio.SimpleAction.new("about", None)
-            about_action.connect("activate", self.on_about)
-            self.add_action(about_action)
         else:
-            # TODO: Provide alternative to application menus
-            print("Environment does not prefer app menu")
-            pass
+            builder = Gtk.Builder()
+            print(views(self.pkgdatadir, "menubar.ui"))
+            builder.add_from_file(views(self.pkgdatadir, "menubar.ui"))
+            self.set_menubar(builder.get_object("menu"))
+
+        new_window_action = Gio.SimpleAction.new("new_window", None)
+        new_window_action.connect("activate", self.on_new_window)
+        self.add_action(new_window_action)
+
+        quit_action = Gio.SimpleAction.new("quit", None)
+        quit_action.connect("activate", self.on_quit)
+        self.add_action(quit_action)
+
+        preferences_action = Gio.SimpleAction.new("preferences", None)
+        preferences_action.connect("activate", self.on_preferences)
+        self.add_action(preferences_action)
+
+        about_action = Gio.SimpleAction.new("about", None)
+        about_action.connect("activate", self.on_about)
+        self.add_action(about_action)
 
     def load_docsets(self, paths):
         for path in paths:
