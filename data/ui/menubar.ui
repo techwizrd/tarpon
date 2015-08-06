@@ -44,15 +44,18 @@
           <section>
             <item>
               <attribute name="label" translatable="yes">Larger Text</attribute>
+                    <attribute name="accel">&lt;Primary&gt;plus</attribute>
               <attribute name="action">win.larger_text</attribute>
             </item>
             <item>
               <attribute name="label" translatable="yes">Smaller Text</attribute>
-              <attribute name="action">win.larger_text</attribute>
+                    <attribute name="accel">&lt;Primary&gt;minus</attribute>
+              <attribute name="action">win.smaller_text</attribute>
             </item>
             <item>
               <attribute name="label" translatable="yes">Normal Size</attribute>
-              <attribute name="action">win.larger_text</attribute>
+                    <attribute name="accel">&lt;Primary&gt;0</attribute>
+              <attribute name="action">win.normal_text</attribute>
             </item>
           </section>
         </submenu>

@@ -1,24 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <menu id="menu">
-  <section>
-    <item>
-      <attribute name="label">_New Window</attribute>
-      <attribute name="accel">&lt;Primary&gt;n</attribute>
-      <attribute name="action">win.new_window</attribute>
-    </item>
-    <item>
-      <attribute name="label">New _Tab</attribute>
-      <attribute name="accel">&lt;Primary&gt;n</attribute>
-      <attribute name="action">win.new_tab</attribute>
-    </item>
-  </section>
-  <section>
-    <item>
-      <attribute name="label" translatable="yes">Preferences</attribute>
-      <attribute name="action">app.preferences</attribute>
-    </item>
-  </section>
+    <section>
+      <item>
+        <attribute name="label">_New Window</attribute>
+        <attribute name="accel">&lt;Primary&gt;n</attribute>
+        <attribute name="action">win.new_window</attribute>
+      </item>
+      <item>
+        <attribute name="label">New _Tab</attribute>
+        <attribute name="accel">&lt;Primary&gt;n</attribute>
+        <attribute name="action">win.new_tab</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Preferences</attribute>
+        <attribute name="action">app.preferences</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Larger Text</attribute>
+              <attribute name="accel">&lt;Primary&gt;plus</attribute>
+        <attribute name="action">win.larger_text</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Smaller Text</attribute>
+              <attribute name="accel">&lt;Primary&gt;minus</attribute>
+        <attribute name="action">win.smaller_text</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Normal Size</attribute>
+              <attribute name="accel">&lt;Primary&gt;0</attribute>
+        <attribute name="action">win.normal_text</attribute>
+      </item>
+    </section>
     <section>
       <item>
         <attribute name="label" translatable="yes">About</attribute>

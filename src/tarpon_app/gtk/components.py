@@ -140,6 +140,18 @@ class WebNotebook(Gtk.Notebook):
         """Return to the previous page in the next tab."""
         self.browser.go_forward()
 
+    def zoom_in(self, widget, data=None):
+        """Increase the font size of the text on the page."""
+        self.browser.zoom_in()
+
+    def zoom_out(self, widget, data=None):
+        """Decrease the font size of the text on the page."""
+        self.browser.zoom_out()
+
+    def reset_zoom(self, widget, data=None):
+        """Reset the font size of the text on the page."""
+        self.browser.set_zoom_level(1.0)
+
 
 class TarponWindow(Gtk.ApplicationWindow):
     def __init__(self, application):
@@ -252,6 +264,18 @@ class TarponWindow(Gtk.ApplicationWindow):
         toggle_panel_action.connect("activate", self.toggle_panel)
         self.add_action(toggle_panel_action)
 
+        larger_text_action = Gio.SimpleAction.new("larger_text")
+        larger_text_action.connect("activate", self.larger_text)
+        self.add_action(larger_text_action)
+
+        smaller_text_action = Gio.SimpleAction.new("smaller_text")
+        smaller_text_action.connect("activate", self.smaller_text)
+        self.add_action(smaller_text_action)
+
+        normal_text_action = Gio.SimpleAction.new("normal_text")
+        normal_text_action.connect("activate", self.normal_text)
+        self.add_action(normal_text_action)
+
     def docitem_selected(self, widget, path, column):
         """Change the browser page when an item is selected from the sidebar."""
         # The tree has 3 levels: docset, data type (function, class, etc.), and
@@ -301,3 +325,12 @@ class TarponWindow(Gtk.ApplicationWindow):
             self.__sidebar.hide()
         else:
             self.__sidebar.show()
+
+    def larger_text(self, widget, data=None):
+        self.__web_notebook.zoom_in(widget, data)
+
+    def smaller_text(self, widget, data=None):
+        self.__web_notebook.zoom_out(widget, data)
+
+    def normal_text(self, widget, data=None):
+        self.__web_notebook.reset_zoom(widget, data)
