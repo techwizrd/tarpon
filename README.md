@@ -18,8 +18,11 @@ In order to install Tarpon, execute the following autotools commands:
     $ ./autogen.sh
     $ make
     $ make install
+    $ pip install -r requirements.txt
 
-Uninstall Tarpon using ``make uninstall`` or install Tarpon locally (rather than system-wide) by executing ``./configure --prefix=~/.local`` before executing ``make``. A distributable package can be built using ``make dist``.
+Uninstall Tarpon using ``make uninstall`` or install Tarpon locally
+(rather than system-wide) by executing ``./configure --prefix=$HOME/.local``
+before executing ``make``. A distributable package can be built using ``make dist``.
 
 FAQ
 ---
