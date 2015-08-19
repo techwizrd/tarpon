@@ -41,6 +41,11 @@
               <attribute name="accel">F9</attribute>
               <attribute name="action">win.toggle_panel</attribute>
             </item>
+            <item>
+              <attribute name="label" translatable="yes">Search Bar</attribute>
+              <attribute name="accel">&lt;Primary&gt;S</attribute>
+              <attribute name="action">win.toggle_searchbar</attribute>
+            </item>
           <section>
             <item>
               <attribute name="label" translatable="yes">Larger Text</attribute>

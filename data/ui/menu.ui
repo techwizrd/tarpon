@@ -35,6 +35,11 @@
               <attribute name="accel">&lt;Primary&gt;0</attribute>
         <attribute name="action">win.normal_text</attribute>
       </item>
+      <item>
+        <attribute name="label" translatable="yes">Search Bar</attribute>
+        <attribute name="accel">&lt;Primary&gt;S</attribute>
+        <attribute name="action">win.toggle_searchbar</attribute>
+      </item>
     </section>
     <section>
       <item>

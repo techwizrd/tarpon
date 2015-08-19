@@ -77,7 +77,12 @@ class Application(Gtk.Application):
         self.pkgdatadir = pkgdatadir
         search_paths = glob.glob(self.data_dir + "/*.docset")
         search_paths.extend(glob.glob(self.cache_dir + "/*.json"))
+        self.__choices = []
         self.load_docsets(search_paths)
+
+    @property
+    def choices(self):
+        return self.__choices
 
     def __new_window(self):
         window = TarponWindow(self)
@@ -122,6 +127,7 @@ class Application(Gtk.Application):
             if path.endswith(".docset"):  # load from disk
                 docset = Docset.frompath(path)
                 self.docsets[docset.name] = docset
+                self.__choices.extend(docset.items)
             elif path.endswith(".json"):  # load from cache files
                 with open(path) as cache_file:
                     for name, url in json.load(cache_file).iteritems():

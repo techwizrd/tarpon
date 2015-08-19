@@ -4,6 +4,7 @@
 import os
 
 from gi.repository import Gdk, Gio, Gtk, WebKit
+from fuzzywuzzy.process import extractBests as search
 
 
 def views(pkgdatadir, path):
@@ -215,7 +216,10 @@ class TarponWindow(Gtk.ApplicationWindow):
 
     def build_sidebar(self):
         # TODO: Refactor build_sidebar() into its own "Sidebar" component
-        self.__sidebar = Gtk.ScrolledWindow()
+        self.__sidebar = Gtk.Box.new(Gtk.Orientation.VERTICAL, 6)
+        self.__sidebar.set_homogeneous(False)
+        self.__results = None
+        self.__sidescroll = Gtk.ScrolledWindow()
         self.__sidebar_store = Gtk.TreeStore(str)
         self.__sidebar_filter = self.__sidebar_store.filter_new()
         self.__sidebar_filter.set_visible_func(self.filter_func)
@@ -234,8 +238,12 @@ class TarponWindow(Gtk.ApplicationWindow):
         self.__treeview.set_headers_visible(False)
         self.__treeview.set_activate_on_single_click(True)
 
-        self.__sidebar.add(self.__treeview)
-        self.__sidebar.set_vexpand(True)
+        self.__search = Gtk.SearchEntry()
+        self.__sidescroll.add(self.__treeview)
+        self.__sidescroll.set_vexpand(True)
+
+        self.__sidebar.pack_start(self.__search, False, False, 0)
+        self.__sidebar.pack_end(self.__sidescroll, True, True, 0)
 
     def connect_signals(self):
         self.connect("destroy", self.on_quit)
@@ -243,6 +251,7 @@ class TarponWindow(Gtk.ApplicationWindow):
         self.__forward.connect("clicked", self.__web_notebook.go_forward)
         self.__new_tab.connect("clicked", self.__web_notebook.new_tab)
         self.__treeview.connect("row-activated", self.docitem_selected)
+        self.__search.connect("search-changed", self.search_docsets)
 
         new_tab_action = Gio.SimpleAction.new("new_tab")
         new_tab_action.connect("activate", self.on_new_tab)
@@ -264,6 +273,10 @@ class TarponWindow(Gtk.ApplicationWindow):
         toggle_panel_action.connect("activate", self.toggle_panel)
         self.add_action(toggle_panel_action)
 
+        toggle_searchbar_action = Gio.SimpleAction.new("toggle_searchbar")
+        toggle_searchbar_action.connect("activate", self.toggle_searchbar)
+        self.add_action(toggle_searchbar_action)
+
         larger_text_action = Gio.SimpleAction.new("larger_text")
         larger_text_action.connect("activate", self.larger_text)
         self.add_action(larger_text_action)
@@ -275,6 +288,17 @@ class TarponWindow(Gtk.ApplicationWindow):
         normal_text_action = Gio.SimpleAction.new("normal_text")
         normal_text_action.connect("activate", self.normal_text)
         self.add_action(normal_text_action)
+
+    def search_docsets(self, widget):
+        # TODO: We should move this off of the main thread for performance
+        query = widget.get_text().strip()
+        if query:
+            self.__results = search(query, self.__application.choices,
+                                    processor=lambda x: x.name)
+        else:
+            self.__results = None
+        self.__sidebar_filter.refilter()
+
 
     def docitem_selected(self, widget, path, column):
         """Change the browser page when an item is selected from the sidebar."""
@@ -306,7 +330,21 @@ class TarponWindow(Gtk.ApplicationWindow):
                     return None
 
     def filter_func(self, model, treeiter, data):
+        if self.__results:
+            if model.iter_has_child(treeiter):
+                return True
+            row = model[treeiter][0]
+            for result, score in self.__results:
+                # TODO: This comparison can result in a UnicodeWarning that
+                # automatically resolves to False no matter what because we are
+                # not making sure both result.name and row can both be decoded
+                # to Unicode. We need to make utf-8 a strong guarantee.
+                if result.name == row:
+                    self.__treeview.expand_to_path(model.get_path(treeiter))
+                    return True
+            return False
         return True
+
 
     def on_new_window(self, action, parameter):
         self.__application.on_new_window(action, parameter)
@@ -325,6 +363,12 @@ class TarponWindow(Gtk.ApplicationWindow):
             self.__sidebar.hide()
         else:
             self.__sidebar.show()
+
+    def toggle_searchbar(self, widget, data=None):
+        if self.__search.is_visible():
+            self.__search.hide()
+        else:
+            self.__search.show()
 
     def larger_text(self, widget, data=None):
         self.__web_notebook.zoom_in(widget, data)
